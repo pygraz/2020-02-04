@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sense Hat control</title>
+    <script src="/static/socket.io.js"></script>
+    <script>
+      let color;
+      let socket;
+
+      function update_element(element) {
+        element.style.backgroundColor = color;
+        let element_id = element.attributes['id'].value;
+        let assignment = {};
+        assignment[element_id] = color;
+        console.log(assignment);
+        socket.send(assignment);
+      }
+
+      function update_all_elements(color) {
+        for (let elem of document.querySelectorAll('.element'))
+          elem.style.backgroundColor = color;
+      }
+
+      function init() {
+        // add event listener to each element
+        for (let elem of document.querySelectorAll('.element')) {
+          elem.addEventListener('mousedown', function () { update_element(elem) });
+          elem.addEventListener('touchstart', function () { update_element(elem) });
+        }
+
+        // determine color depending on user agent
+        let num = (new Date).getTime() % 4;
+        for (let c of navigator.userAgent)
+          num += c.charCodeAt(0);
+        color = {3: "#AAA", 2: "#F00", 1: "#0F0", 0: "#00F"}[num % 4];
+
+        // websockets handling
+        socket = io(document.URL);
+
+        socket.on('connect', () => {
+          console.debug(`[open] Connection opened`);
+          update_all_elements("#FFF");
+        });
+
+        socket.on('update', (data) => {
+          console.info('Update received');
+
+          for (let id in data) {
+            let element_color = data[id];
+            document.querySelector("#" + id).style.backgroundColor = element_color;
+          }
+        });
+
+        socket.on('error', (err) => {
+          console.error(err);
+          update_all_elements("#F00");
+        });
+
+        socket.on('disconnect', (reason) => {
+          console.debug(`[close] Connection closed. Reason: ${reason}`);
+          update_all_elements("#DDD");
+        });
+      }
+    </script>
+    <style>
+      @media all {
+        html {
+          margin: auto;
+          background-color: #CCC;
+        }
+        body {
+          height: 100%;
+        }
+        #container {
+          display: grid;
+          grid-template-columns: repeat(8, 1fr);
+          grid-template-rows: repeat(8, 1fr);
+          grid-gap: 5px;
+          width: 100%;
+          height: 100%;
+        }
+        .element {
+          background-color: #DDD;
+          width: 100%;
+          height: 100%;
+          display: inline-block;
+        }
+      }
+
+
+      @media only screen and (min-width: 600px) {
+        html {
+          width: 50vw;
+          height: 100%;
+          min-width: 450px;
+          min-height: 450px;
+        }
+      }
+
+      @media only screen and (max-width: 601px) {
+        html {
+          width: 100vw;
+          height: 100vh;
+          min-width: 300px;
+          min-height: 300px;
+        }
+      }
+    </style>
+  </head>
+  <body onload="init()">
+    <div id="container">
+      <div class="element" id="r0c0">&nbsp;</div>
+      <div class="element" id="r0c1">&nbsp;</div>
+      <div class="element" id="r0c2">&nbsp;</div>
+      <div class="element" id="r0c3">&nbsp;</div>
+      <div class="element" id="r0c4">&nbsp;</div>
+      <div class="element" id="r0c5">&nbsp;</div>
+      <div class="element" id="r0c6">&nbsp;</div>
+      <div class="element" id="r0c7">&nbsp;</div>
+      <div class="element" id="r1c0">&nbsp;</div>
+      <div class="element" id="r1c1">&nbsp;</div>
+      <div class="element" id="r1c2">&nbsp;</div>
+      <div class="element" id="r1c3">&nbsp;</div>
+      <div class="element" id="r1c4">&nbsp;</div>
+      <div class="element" id="r1c5">&nbsp;</div>
+      <div class="element" id="r1c6">&nbsp;</div>
+      <div class="element" id="r1c7">&nbsp;</div>
+      <div class="element" id="r2c0">&nbsp;</div>
+      <div class="element" id="r2c1">&nbsp;</div>
+      <div class="element" id="r2c2">&nbsp;</div>
+      <div class="element" id="r2c3">&nbsp;</div>
+      <div class="element" id="r2c4">&nbsp;</div>
+      <div class="element" id="r2c5">&nbsp;</div>
+      <div class="element" id="r2c6">&nbsp;</div>
+      <div class="element" id="r2c7">&nbsp;</div>
+      <div class="element" id="r3c0">&nbsp;</div>
+      <div class="element" id="r3c1">&nbsp;</div>
+      <div class="element" id="r3c2">&nbsp;</div>
+      <div class="element" id="r3c3">&nbsp;</div>
+      <div class="element" id="r3c4">&nbsp;</div>
+      <div class="element" id="r3c5">&nbsp;</div>
+      <div class="element" id="r3c6">&nbsp;</div>
+      <div class="element" id="r3c7">&nbsp;</div>
+      <div class="element" id="r4c0">&nbsp;</div>
+      <div class="element" id="r4c1">&nbsp;</div>
+      <div class="element" id="r4c2">&nbsp;</div>
+      <div class="element" id="r4c3">&nbsp;</div>
+      <div class="element" id="r4c4">&nbsp;</div>
+      <div class="element" id="r4c5">&nbsp;</div>
+      <div class="element" id="r4c6">&nbsp;</div>
+      <div class="element" id="r4c7">&nbsp;</div>
+      <div class="element" id="r5c0">&nbsp;</div>
+      <div class="element" id="r5c1">&nbsp;</div>
+      <div class="element" id="r5c2">&nbsp;</div>
+      <div class="element" id="r5c3">&nbsp;</div>
+      <div class="element" id="r5c4">&nbsp;</div>
+      <div class="element" id="r5c5">&nbsp;</div>
+      <div class="element" id="r5c6">&nbsp;</div>
+      <div class="element" id="r5c7">&nbsp;</div>
+      <div class="element" id="r6c0">&nbsp;</div>
+      <div class="element" id="r6c1">&nbsp;</div>
+      <div class="element" id="r6c2">&nbsp;</div>
+      <div class="element" id="r6c3">&nbsp;</div>
+      <div class="element" id="r6c4">&nbsp;</div>
+      <div class="element" id="r6c5">&nbsp;</div>
+      <div class="element" id="r6c6">&nbsp;</div>
+      <div class="element" id="r6c7">&nbsp;</div>
+      <div class="element" id="r7c0">&nbsp;</div>
+      <div class="element" id="r7c1">&nbsp;</div>
+      <div class="element" id="r7c2">&nbsp;</div>
+      <div class="element" id="r7c3">&nbsp;</div>
+      <div class="element" id="r7c4">&nbsp;</div>
+      <div class="element" id="r7c5">&nbsp;</div>
+      <div class="element" id="r7c6">&nbsp;</div>
+      <div class="element" id="r7c7">&nbsp;</div>
+    </div>
+  </body>
+</html>
